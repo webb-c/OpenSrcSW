@@ -25,5 +25,12 @@ public class kuir {
             indexer post = new indexer(path);
             post.makepost();
         }
+        else if(command.equals("-s")) {
+            String command2 = args[2];
+            String query = args[3];
+            searcher sh = new searcher(path);
+            if(command2.equals("-q")) sh.CalcSim(query);
+            else System.out.println("input format error");
+        }
     }
 }
