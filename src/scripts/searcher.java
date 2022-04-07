@@ -139,7 +139,6 @@ public class searcher {
                         numdata[i] = Float.parseFloat(database[i]);
                     }
                     for(int i = 0 ; i < 5 ; i++ ){
-                        id_doc[i] = id_doc[i] + numdata[1+2*i]*weight;   //InnerProduct로 나중에 대치하기
                         id_index[i] = id_index[i] + numdata[1+2*i]*numdata[1+2*i];//||B|| 구해두기
                     }
                     break;
@@ -151,7 +150,7 @@ public class searcher {
 
         //정규화
         for(int i = 0 ; i < id_doc.length ; i++){
-            id_doc[i] = (float) (id_doc[i] / (Math.sqrt(all_weight) * Math.sqrt(id_index[i])));
+            id_doc[i] = (float) (InnerProduct(query, i) / (Math.sqrt(all_weight) * Math.sqrt(id_index[i])));
         }
 
         //유사도 저장한 배열 가지고 각 문서별 title 가져와서 출력하기
@@ -202,31 +201,26 @@ class Typeforsort implements Comparable {
     private int id;
     private float sim;
 
-    public Typeforsort(int id, float sim){
+    public Typeforsort(int id, float sim) {
         this.id = id;
         this.sim = sim;
     }
 
-    public int getid(){
+    public int getid() {
         return id;
     }
 
-    public float getsim(){
+    public float getsim() {
         return sim;
     }
 
     @Override
     public int compareTo(Object o) {
-        Typeforsort t = (Typeforsort)o;
-        if(this.sim < t.sim) return 1;
-        else if(this.sim == t.sim) {
-            if(this.id < t.id) return -1;
+        Typeforsort t = (Typeforsort) o;
+        if (this.sim < t.sim) return 1;
+        else if (this.sim == t.sim) {
+            if (this.id < t.id) return -1;
             else return 1;
-        }
-        else return -1;
+        } else return -1;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> feature
