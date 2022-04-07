@@ -38,10 +38,6 @@ public class searcher {
         this.input_file = path;
     }
 
-    public void CalcSim(String query){
-
-    }
-
     public float InnerProduct(String query, int id) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
         this.query = query;
 
