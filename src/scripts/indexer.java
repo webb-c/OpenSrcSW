@@ -67,11 +67,15 @@ public class indexer {
                             if(k.keyword.equals(body__split[0])){
                                 check = true;  //해당 키워드가 이미 리스트에 존재
                                 k.doc_fre_set(temp, Integer.parseInt(body__split[1]));  //새 문서를 기준으로 배열 추가
+                                break;
                             }
                         }
                         if(!check) {   //리스트 반복 끝났는데도 발견 못한 경우엔 새로 단어를 추가
+                            //System.out.println(body__split[0]+"추가");
                             keyword_list.add(new Keyword_C(body__split[0], temp, Integer.parseInt(body__split[1])));
                         }
+
+                        check = false;
                     }
                 }
             }
