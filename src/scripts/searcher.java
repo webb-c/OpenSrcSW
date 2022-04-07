@@ -38,6 +38,61 @@ public class searcher {
         this.input_file = path;
     }
 
+    public float InnerProduct(String query, int id) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
+        this.query = query;
+
+        HashMap<String, Integer> hashMap_query = new HashMap<String, Integer>();
+        String keywordString = "";
+        KeywordExtractor ke = new KeywordExtractor();                         //추출에 사용되는 객체
+        KeywordList k = ke.extractKeyword(query, true);
+
+        for (int i = 0; i < k.size(); i++) {
+            Keyword kwrd = k.get(i);
+            hashMap_query.put(kwrd.getString(), kwrd.getCnt());
+        }
+
+        //post 파일 읽기
+        FileInputStream fileinstream = new FileInputStream(input_file);
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileinstream);
+
+        Object object = objectInputStream.readObject();
+        objectInputStream.close();
+
+        HashMap hashMap = (HashMap) object;
+
+        int count = 0;
+        float id_doc[] = {0, 0, 0, 0, 0};  //각각의 문서별 유사도를 저장할 배열
+        float numdata[] = new float[10];
+
+        Iterator<String> it = hashMap_query.keySet().iterator();
+        while (it.hasNext()) {
+            //정상 작동
+            String key_q = it.next();
+            //System.out.println(key_q);
+
+            Iterator<String> hit = hashMap.keySet().iterator();
+            while (hit.hasNext()) {
+                String key_p = hit.next();
+                //System.out.println("현재 쿼리 키워드 : "+key_q +"post 키워드 : "+key_p);
+                if (key_q.equals(key_p)) {   //동일한 키워드를 찾았을 때
+
+                    count++;
+                    String data = (String) hashMap.get(key_p);    //그 post가 갖는 빈도수 관련 내용 추출
+                    int weight = hashMap_query.get(key_q);
+                    String[] database = data.split(" ");
+                    for (int i = 0; i < database.length; i++) {
+                        numdata[i] = Float.parseFloat(database[i]);
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        id_doc[i] = id_doc[i] + numdata[1 + 2 * i] * weight;
+                    }
+                    break;
+                }
+            }
+        }
+        return id_doc[id];
+    }
+
     public void CalcSim(String query) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
         this.query = query;
 
@@ -141,8 +196,6 @@ public class searcher {
         System.out.println("========================================");
         System.out.println("5주차 실행완료");
     }
-
-
 }
 
 class Typeforsort implements Comparable {
@@ -172,4 +225,8 @@ class Typeforsort implements Comparable {
         }
         else return -1;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> feature
