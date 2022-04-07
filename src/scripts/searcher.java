@@ -38,7 +38,11 @@ public class searcher {
         this.input_file = path;
     }
 
-    public void CalcSim(String query) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
+    public void CalcSim(String query){
+
+    }
+
+    public float InnerProduct(String query, int id) throws IOException, ClassNotFoundException, ParserConfigurationException, SAXException {
         this.query = query;
 
         HashMap<String, Integer> hashMap_query = new HashMap<String, Integer>();
@@ -46,7 +50,7 @@ public class searcher {
         KeywordExtractor ke = new KeywordExtractor();                         //추출에 사용되는 객체
         KeywordList k = ke.extractKeyword(query, true);
 
-        for(int i = 0; i < k.size() ; i++){
+        for (int i = 0; i < k.size(); i++) {
             Keyword kwrd = k.get(i);
             hashMap_query.put(kwrd.getString(), kwrd.getCnt());
         }
@@ -58,14 +62,14 @@ public class searcher {
         Object object = objectInputStream.readObject();
         objectInputStream.close();
 
-        HashMap hashMap = (HashMap)object;
+        HashMap hashMap = (HashMap) object;
 
         int count = 0;
         float id_doc[] = {0, 0, 0, 0, 0};  //각각의 문서별 유사도를 저장할 배열
         float numdata[] = new float[10];
 
         Iterator<String> it = hashMap_query.keySet().iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             //정상 작동
             String key_q = it.next();
             //System.out.println(key_q);
@@ -74,68 +78,24 @@ public class searcher {
             while (hit.hasNext()) {
                 String key_p = hit.next();
                 //System.out.println("현재 쿼리 키워드 : "+key_q +"post 키워드 : "+key_p);
-                if(key_q.equals(key_p)){   //동일한 키워드를 찾았을 때
+                if (key_q.equals(key_p)) {   //동일한 키워드를 찾았을 때
 
                     count++;
-                    String data = (String)hashMap.get(key_p);    //그 post가 갖는 빈도수 관련 내용 추출
+                    String data = (String) hashMap.get(key_p);    //그 post가 갖는 빈도수 관련 내용 추출
                     int weight = hashMap_query.get(key_q);
-                    String [] database = data.split(" ");
-                    for(int i = 0 ; i< database.length; i++){
+                    String[] database = data.split(" ");
+                    for (int i = 0; i < database.length; i++) {
                         numdata[i] = Float.parseFloat(database[i]);
                     }
-                    for(int i = 0 ; i < 5 ; i++ ){
-                        id_doc[i] = id_doc[i] + numdata[1+2*i]*weight;
+                    for (int i = 0; i < 5; i++) {
+                        id_doc[i] = id_doc[i] + numdata[1 + 2 * i] * weight;
                     }
-
                     break;
                 }
             }
         }
-
-        //유사도 저장한 배열 가지고 각 문서별 title 가져와서 출력하기
-        //문서 id, 유사도 값을 저장하는 객체 배열
-        Typeforsort[] arr = new Typeforsort[5];
-        for(int i = 0 ; i < id_doc.length ; i++){
-            arr[i] = new Typeforsort(i, id_doc[i]);
-        }
-
-        Arrays.sort(arr);
-
-        //title읽어올 때 쓸 collection.xml 읽어서 id별 title 배열에 저장하기
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-        Document document = docBuilder.parse("./collection.xml");
-
-        document.getDocumentElement().normalize();
-        NodeList nList = document.getElementsByTagName("doc");
-
-        String title_arr[] = new String[5];
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-            Node nNode = nList.item(temp);
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element eElement = (Element) nNode;
-                title_arr[temp] = eElement.getElementsByTagName("title").item(0).getTextContent();;
-            }
-        }
-
-        System.out.println("========================================");
-        //3개만 읽어서 그 id에 해당되는 title이랑 빈도수 출력
-        for(int i = 0 ; i<3 ; i++){
-            String title = "";
-            int id = arr[i].getid();
-            title = title_arr[id];
-            System.out.println("Title : "+title+"\t Similarity : "+arr[i].getsim()+"");
-        }
-
-        if(count == 0){
-            //입력된 문장중에 동일한 키워드가 없을 때
-            System.out.println("검색 내용을 찾을 수 없습니다.");
-        }
-        System.out.println("========================================");
-        System.out.println("5주차 실행완료");
+        return id_doc[id];
     }
-
-
 }
 
 class Typeforsort implements Comparable {
