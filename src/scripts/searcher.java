@@ -71,12 +71,10 @@ public class searcher {
             //정상 작동
             String key_q = it.next();
             //System.out.println(key_q);
-
+            int weight = hashMap_query.get(key_q);
             Iterator<String> hit = hashMap.keySet().iterator();
             while (hit.hasNext()) {
                 String key_p = hit.next();
-                int weight = hashMap_query.get(key_q);
-
                 //System.out.println("현재 쿼리 키워드 : "+key_q +"post 키워드 : "+key_p);
                 if(key_q.equals(key_p)){   //동일한 키워드를 찾았을 때
                     count++;
@@ -92,8 +90,8 @@ public class searcher {
                     break;
                 }
 
-                all_weight = all_weight + (weight*weight);
             }
+            all_weight = all_weight + (weight*weight);
         }
 
         //정규화
