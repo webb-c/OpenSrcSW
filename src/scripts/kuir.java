@@ -32,5 +32,12 @@ public class kuir {
             if(command2.equals("-q")) sh.CalcSim(query);
             else System.out.println("input format error");
         }
+        else if(command.equals("-m")) {
+            String command2 = args[2];
+            String query = args[3];
+            MidTerm md = new MidTerm(path);
+            if(command2.equals("-q")) md.showSnippet(query);
+            else System.out.println("input format error");
+        }
     }
 }
